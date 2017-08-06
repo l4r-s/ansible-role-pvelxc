@@ -1,0 +1,30 @@
+---
+# This playbook contains some basic setup steps that should be run on all nodes.
+
+- name: create proxmox lxc contaoner
+  proxmox:
+    node: "{{proxmox_node}}"
+    api_user: "{{proxmox_username}}"
+    api_password: "{{proxmox_password}}"
+    api_host: "{{proxmox_fqdn}}"
+    password: "{{root_password}}"
+    hostname: "{{vm_name}}"
+    ostemplate: 'local:vztmpl/centos7.tar.gz'
+    netif: '{"net0":"name=eth0,gw={{gw}},ip={{ip}},bridge=vmbr0"}'
+    vmid: "{{vmid}}"
+  delegate_to: localhost
+
+- name: start container
+  proxmox:
+    node: "{{proxmox_node}}"
+    api_user: "{{proxmox_username}}"
+    api_password: "{{proxmox_password}}"
+    api_host: "{{proxmox_fqdn}}"
+    password: "{{root_password}}"
+    state: started
+    vmid: "{{vmid}}"
+  delegate_to: localhost
+
+- name: wait for container to boot
+  wait_for: port=22 host="{{ansible_host}}" search_regex=OpenSSH delay=10
+  connection: local
