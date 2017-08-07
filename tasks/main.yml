@@ -1,7 +1,7 @@
 ---
 # This playbook contains some basic setup steps that should be run on all nodes.
 
-- name: create proxmox lxc contaoner
+- name: create proxmox lxc container
   proxmox:
     node: "{{proxmox_node}}"
     api_user: "{{proxmox_username}}"
@@ -12,6 +12,7 @@
     ostemplate: 'local:vztmpl/centos7.tar.gz'
     netif: '{"net0":"name=eth0,gw={{gw}},ip={{ip}},bridge=vmbr0"}'
     vmid: "{{vmid}}"
+    storage: "{{proxmox_storage}}"
   delegate_to: localhost
 
 - name: start container
